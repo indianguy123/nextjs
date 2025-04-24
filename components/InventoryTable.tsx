@@ -9,10 +9,34 @@ import {
   setFilter,
   setSort,
 } from "@/store/inventorySlice";
-
+interface Subcomponent {
+  total_quantity: number,
+  component_id:string,
+  component_name:string,
+  damaged_quantity: number,
+  usable_quantity: number;
+}
 export default function InventoryTable() {
   const dispatch = useAppDispatch();
-  const data = useAppSelector(selectFilteredSortedPaginatedData);
+  const rawData = useAppSelector(selectFilteredSortedPaginatedData) as Array<{
+    id: number;
+    name: string;
+    subcomponents: Record<string, string | number>[];
+  } | null>;
+
+  const data = rawData
+    .filter((item): item is NonNullable<typeof item> => item !== null)
+    .map((item) => ({
+      id: item.id.toString(),
+      name: item.name,
+      subcomponents: item.subcomponents.map((sub) => ({
+        component_id: sub.component_id as string,
+        component_name: sub.component_name as string,
+        total_quantity: sub.total_quantity as number,
+        damaged_quantity: sub.damaged_quantity as number,
+        usable_quantity: sub.usable_quantity as number,
+      })),
+    }));
   const page = useAppSelector((state) => state.inventory.page);
   const sort = useAppSelector((state) => state.inventory.sort);
   const [searchQuery, setSearchQuery] = useState("");
@@ -83,8 +107,8 @@ export default function InventoryTable() {
           {data.map((parent, parentIndex) => (
             <React.Fragment key={`${uniqueId}-parent-${parentIndex}`}>
               <tr className="bg-gray-200 dark:bg-gray-700 font-semibold">
-                <td className="p-2 border">{parent.component_id}</td>
-                <td className="p-2 border">{parent.component_name}</td>
+                <td className="p-2 border">{parent?.id}</td>
+                <td className="p-2 border">{parent?.name}</td>
                 <td className="p-2 border">Main</td>
                 <td className="p-2 border" colSpan={4}>
                   —
@@ -92,7 +116,7 @@ export default function InventoryTable() {
                 <td className="p-2 border"></td>
               </tr>
 
-              {parent?.subcomponents?.map((sub: any, subIndex: number) => {
+              {parent?.subcomponents?.map((sub: Subcomponent, subIndex: number) => {
                 const usable = sub.usable_quantity;
                 const alertStatus =
                   usable === 0

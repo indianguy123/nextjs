@@ -12,7 +12,8 @@ interface InventoryItem {
   name: string;
   type: string;
   status: string;
-  [key: string]: any;
+  subcomponents?: Array<Record<string, string | number>>; // Define subcomponents as an array of objects
+  [key: string]: string | number | undefined | Array<Record<string, string | number>>;
 }
 
 interface InventoryState {
@@ -78,8 +79,9 @@ export const selectFilteredSortedPaginatedData = (state: { inventory: InventoryS
 
   const sorted = sort.key
     ? [...filtered].sort((a, b) => {
-        const valA = a[sort.key];
-        const valB = b[sort.key];
+        if (!a || !b) return 0; // Ensure a and b are not null
+        const valA = a[sort.key as keyof typeof a];
+        const valB = b[sort.key as keyof typeof b];
         if (valA < valB) return sort.direction === 'asc' ? -1 : 1;
         if (valA > valB) return sort.direction === 'asc' ? 1 : -1;
         return 0;

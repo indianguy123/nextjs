@@ -62,7 +62,7 @@ export const selectFilteredSortedPaginatedData = (state: { inventory: InventoryS
   const filtered = data
     .map((parent) => {
       // Filter subcomponents
-      const filteredSubs = parent.subcomponents?.filter((sub: any) =>
+      const filteredSubs = parent.subcomponents?.filter((sub: Record<string, string | number>) =>
         Object.keys(filter).every((key) =>
           sub[key]?.toString().toLowerCase().includes(filter[key].toLowerCase())
         )

@@ -92,7 +92,7 @@ export default function InventoryTable() {
                 <td className="p-2 border"></td>
               </tr>
 
-              {parent.subcomponents?.map((sub: any, subIndex: number) => {
+              {parent?.subcomponents?.map((sub: any, subIndex: number) => {
                 const usable = sub.usable_quantity;
                 const alertStatus =
                   usable === 0

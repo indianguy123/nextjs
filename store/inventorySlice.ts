@@ -63,6 +63,7 @@ export const selectFilteredSortedPaginatedData = (state: { inventory: InventoryS
     Object.keys(filter).every((key) => {
       const value = row[key];
       const search = filter[key];
+      if (value === undefined || value === null) return false;
       return (
         typeof value === "string" &&
         value.toLowerCase().includes(search.toLowerCase())

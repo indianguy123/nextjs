@@ -11,8 +11,8 @@ import {
 } from "@/store/inventorySlice";
 interface Subcomponent {
   total_quantity: number,
-  component_id:string,
-  component_name:string,
+  component_id: string,
+  component_name: string,
   damaged_quantity: number,
   usable_quantity: number;
 }
@@ -27,16 +27,17 @@ export default function InventoryTable() {
   const data = rawData
     .filter((item): item is NonNullable<typeof item> => item !== null)
     .map((item) => ({
-      id: item.id.toString(),
-      name: item.name,
-      subcomponents: item.subcomponents.map((sub) => ({
-        component_id: sub.component_id as string,
-        component_name: sub.component_name as string,
-        total_quantity: sub.total_quantity as number,
-        damaged_quantity: sub.damaged_quantity as number,
-        usable_quantity: sub.usable_quantity as number,
-      })),
+      id: item?.id?.toString() || "N/A",
+      name: item?.name || "Unnamed",
+      subcomponents: item.subcomponents?.map((sub) => ({
+        component_id: sub?.component_id?.toString() ?? "",
+        component_name: sub?.component_name?.toString() ?? "",
+        total_quantity: Number(sub?.total_quantity ?? 0),
+        damaged_quantity: Number(sub?.damaged_quantity ?? 0),
+        usable_quantity: Number(sub?.usable_quantity ?? 0),
+      })) ?? [],
     }));
+
   const page = useAppSelector((state) => state.inventory.page);
   const sort = useAppSelector((state) => state.inventory.sort);
   const [searchQuery, setSearchQuery] = useState("");
